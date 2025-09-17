@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php
 
 class connect{
@@ -27,6 +28,5 @@ class connect{
     }
 
 }
-
 
 ?>

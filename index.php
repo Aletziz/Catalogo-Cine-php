@@ -1,19 +1,18 @@
 <?php include "header.php"; ?>
 <?php include "connect.php"; ?>
-
 <?php
 $objconexion = new Connect();
 $mostrar = $objconexion->consultar("SELECT * FROM `pelicula`");
 $destacadas = $objconexion->consultar("SELECT * FROM `pelicula` WHERE destacado = 1");
 
-$objconexion = new Connect();
-$mostrar = $objconexion->consultar("SELECT p.*, 
+    $objconexion = new Connect();
+    $mostrar = $objconexion->consultar("SELECT p.*, 
     COALESCE(AVG(pt.puntuacion), 0) as promedio_puntuacion,
     COALESCE(COUNT(pt.puntuacion), 0) as total_votos
     FROM pelicula p 
     LEFT JOIN puntuaciones pt ON p.id = pt.pelicula_id 
     GROUP BY p.id");
-$destacadas = $objconexion->consultar("SELECT p.*, 
+    $destacadas = $objconexion->consultar("SELECT p.*, 
     COALESCE(AVG(pt.puntuacion), 0) as promedio_puntuacion,
     COALESCE(COUNT(pt.puntuacion), 0) as total_votos
     FROM pelicula p 
@@ -21,7 +20,6 @@ $destacadas = $objconexion->consultar("SELECT p.*,
     WHERE p.destacado = 1 
     GROUP BY p.id");
 ?>
-    
 <?php if(count($destacadas) > 0) { ?>
     <div class="container">
         <h2>Películas destacadas</h2>

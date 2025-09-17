@@ -53,6 +53,7 @@
         flex: 1;
         display: -webkit-box;
         -webkit-line-clamp: 3;
+        line-clamp: 3;
         -webkit-box-orient: vertical;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -144,12 +145,30 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
         <div class="container">
-            <a class="navbar-brand" href="#">CineCatálogo</a>
+            <a class="navbar-brand" href="index.php">CineCatálogo</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <!-- Buscador simple -->
+                    <form action="buscadas.php" method="post">
+                        <div class="d-flex me-auto ms-3">
+                            <div class="input-group" style="width: 300px;">
+                                <span class="input-group-text">
+                                    <i class="bi bi-search"></i>
+                                </span>
+                                <input 
+                                    type="text" 
+                                    class="form-control" 
+                                    placeholder="Buscar películas..."
+                                    id="navbarSearch"
+                                    name="buscar"
+                                >
+                            </div>
+                        </div>
+                    </form>
+            
+                <ul class="navbar-nav">
                     <li class="nav-item">
                         <a class="nav-link active" href="#">Inicio</a>
                     </li>

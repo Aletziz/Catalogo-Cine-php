@@ -149,28 +149,28 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            
             <div class="collapse navbar-collapse" id="navbarNav">
                 <!-- Buscador simple -->
-                    <form action="buscadas.php" method="post">
-                        <div class="d-flex me-auto ms-3">
-                            <div class="input-group" style="width: 300px;">
-                                <span class="input-group-text">
-                                    <i class="bi bi-search"></i>
-                                </span>
-                                <input 
-                                    type="text" 
-                                    class="form-control" 
-                                    placeholder="Buscar películas..."
-                                    id="navbarSearch"
-                                    name="buscar"
-                                >
-                            </div>
-                        </div>
-                    </form>
-            
+                <form action="buscadas.php" method="post" class="d-flex me-auto ms-3">
+                    <div class="input-group" style="width: 300px;">
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            placeholder="Buscar películas..."
+                            id="navbarSearch"
+                            name="buscar"
+                        >
+                        <button class="btn btn-outline-light" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Opciones del menú -->
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">Inicio</a>
+                        <a class="nav-link active" href="index.php">Inicio</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Categorías</a>

@@ -139,11 +139,79 @@
 .rating-display .stars {
     pointer-events: none;
 }
+
+    /* Navbar fijo que se mantiene en su posición */
+    .navbar-sticky {
+        position: sticky;
+        top: 0;
+        z-index: 1030;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* Barra lateral fija */
+    .sidebar-fixed {
+        position: fixed;
+        top: 80px; /* Altura del navbar */
+        left: 15px;
+        width: calc(25% - 30px);
+        height: auto;
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+        z-index: 1020;
+        background: #fff;
+        border-right: 1px solid #dee2e6;
+        padding: 0;
+    }
+
+    /* Contenido principal ajustado */
+    .content-with-sidebar {
+        margin-left: 25%;
+        padding-left: 15px;
+    }
+
+    /* Responsive para tablets */
+    @media (min-width: 768px) and (max-width: 991.98px) {
+        .sidebar-fixed {
+            width: calc(33.333333% - 30px);
+        }
+        .content-with-sidebar {
+            margin-left: 33.333333%;
+        }
+    }
+
+    /* Scrollbar personalizado para la sidebar */
+    .sidebar-fixed::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .sidebar-fixed::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    .sidebar-fixed::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 3px;
+    }
+
+    .sidebar-fixed::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+
+    /* En móviles ocultar sidebar y ajustar contenido */
+    @media (max-width: 767.98px) {
+        .sidebar-fixed {
+            display: none;
+        }
+        .content-with-sidebar {
+            margin-left: 0;
+            padding-left: 15px;
+        }
+    }
 </style>
 </head>
 <body class="bg-light">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark navbar-sticky mb-4">
         <div class="container">
             <a class="navbar-brand" href="index.php">CineCatálogo</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">

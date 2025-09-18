@@ -1,5 +1,5 @@
 <!-- Footer -->
-<footer class="bg-dark text-white mt-5 py-4">
+<footer class="bg-dark text-white mt-5 py-4" style="position: relative; z-index: 1050;">
     <div class="container">
         <div class="row">
             <!-- Información de la empresa -->

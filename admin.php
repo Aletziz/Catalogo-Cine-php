@@ -20,11 +20,13 @@ if(isset($_POST['nombre']) && isset($_POST['descripcion']) && isset($_POST['cate
     $objconexion->ejecutar($sql);
     header("location:admin.php");
 }
-    if($_GET){
-    $id = $_GET['borrar'];
+if(isset($_GET['borrar'])){
+    $id = intval($_GET['borrar']);
     $objconexion = new connect();
     $imagen=$objconexion->consultar("SELECT ruta FROM `pelicula` WHERE id=".$id);
-    unlink("imgs/".$imagen[0]['ruta']);
+    if($imagen && count($imagen) > 0) {
+        unlink("imgs/".$imagen[0]['ruta']);
+    }
     $sql = "DELETE FROM pelicula WHERE `pelicula`.`id` = ".$id;
     $objconexion->ejecutar($sql);
     header("location:admin.php");
@@ -39,7 +41,21 @@ if(isset($_POST['guardar_destacados'])) {
     }
     header("location:admin.php");
 }
-$peliculas = $objconexion->consultar("SELECT * FROM `pelicula`");
+if(isset($_POST['titulo_noticia']) && isset($_POST['descripcion_noticia'])) {
+    $titulo_noticia = $_POST['titulo_noticia'];
+    $descripcion_noticia = $_POST['descripcion_noticia'];
+    $objconexion->ejecutar("INSERT INTO `news` (`id`, `titulo`, `descripcion`) VALUES (NULL, '$titulo_noticia', '$descripcion_noticia');");
+    header("location:admin.php");
+}
+if(isset($_GET['borrar_noticia'])){
+    $id_noticia = intval($_GET['borrar_noticia']);
+    $objconexion = new connect();
+    $objconexion->ejecutar("DELETE FROM news WHERE id = $id_noticia");
+    header("location:admin.php");
+}
+
+$peliculas = $objconexion->consultar("SELECT * FROM pelicula ORDER BY id DESC");
+$noticias = $objconexion->consultar("SELECT * FROM news ORDER BY id DESC");
 ?>
 
 
@@ -125,51 +141,171 @@ $peliculas = $objconexion->consultar("SELECT * FROM `pelicula`");
                     
                     <div class="card-body">
                         <form id="form-destacados" method="post">
-                            <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Nombre</th>
-                                    <th>Categoría</th>
-                                    <th>Imagen</th>
-                                    <th>Director</th>
-                                    <th>Duracion</th>
-                                    <th>Reparto</th>
-                                    <th>Destacadas</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach($peliculas as $pelicula) { ?>
-                                <tr>
-                                    <td><?php echo $pelicula['nombre']; ?></td>
-                                    <td><?php echo $pelicula['accion']; ?></td>
-                                    <td>
-                                        <img width="100" src="imgs/<?php echo $pelicula['ruta']; ?>" alt="">
-                                    </td>
-                                    <td><?php echo $pelicula['director']; ?></td>
-                                    <td><?php echo $pelicula['duracion']; ?></td>
-                                    <td><?php echo $pelicula['reparto']; ?></td>
-                                    <td><input class="form-check-input" 
-                                       type="checkbox" 
-                                       name="destacado[]"  
-                                       value="<?php echo $pelicula['id']; ?>" 
-                                       id="destacado_<?php echo $pelicula['id']; ?>"
-                                       <?php echo ($pelicula['destacado'] == 1) ? 'checked' : ''; ?>>
-                                    <td>
-                                        <a href="?borrar=<?php echo $pelicula['id']; ?>" 
-                                           class="btn btn-danger btn-sm">
-                                            Eliminar </a>
-                                    </td>
-                                </tr>
-                                <?php } ?>
-                            </tbody>
-                        </table>
+                            <!-- Contenedor con scroll para la tabla -->
+                            <div class="table-responsive" style="max-height: 500px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 0.375rem;">
+                                <table class="table table-striped table-hover mb-0">
+                                    <thead class="table-dark sticky-top">
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Categoría</th>
+                                            <th>Imagen</th>
+                                            <th>Director</th>
+                                            <th>Duración</th>
+                                            <th>Reparto</th>
+                                            <th>Destacada</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if(empty($peliculas)) { ?>
+                                        <tr>
+                                            <td colspan="8" class="text-center text-muted py-4">
+                                                <i class="fas fa-film fa-2x mb-2"></i><br>
+                                                No hay películas registradas
+                                            </td>
+                                        </tr>
+                                        <?php } else { ?>
+                                            <?php foreach($peliculas as $pelicula) { ?>
+                                            <tr>
+                                                <td class="fw-bold"><?php echo htmlspecialchars($pelicula['nombre']); ?></td>
+                                                <td>
+                                                    <span class="badge bg-primary"><?php echo htmlspecialchars($pelicula['accion']); ?></span>
+                                                </td>
+                                                <td>
+                                                    <img width="60" height="90" 
+                                                         src="imgs/<?php echo htmlspecialchars($pelicula['ruta']); ?>" 
+                                                         alt="<?php echo htmlspecialchars($pelicula['nombre']); ?>"
+                                                         class="img-thumbnail" 
+                                                         style="object-fit: cover;">
+                                                </td>
+                                                <td><?php echo htmlspecialchars($pelicula['director']); ?></td>
+                                                <td>
+                                                    <span class="badge bg-secondary"><?php echo htmlspecialchars($pelicula['duracion']); ?> min</span>
+                                                </td>
+                                                <td class="text-truncate" style="max-width: 150px;" title="<?php echo htmlspecialchars($pelicula['reparto']); ?>">
+                                                    <?php echo htmlspecialchars($pelicula['reparto']); ?>
+                                                </td>
+                                                <td class="text-center">
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input" 
+                                                               type="checkbox" 
+                                                               name="destacado[]"  
+                                                               value="<?php echo $pelicula['id']; ?>" 
+                                                               id="destacado_<?php echo $pelicula['id']; ?>"
+                                                               <?php echo ($pelicula['destacado'] == 1) ? 'checked' : ''; ?>>
+                                                        <label class="form-check-label" for="destacado_<?php echo $pelicula['id']; ?>">
+                                                            <i class="fas fa-star text-warning"></i>
+                                                        </label>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <a href="?borrar=<?php echo $pelicula['id']; ?>" 
+                                                       class="btn btn-danger btn-sm"
+                                                       onclick="return confirm('¿Estás seguro de eliminar esta película?')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            <?php } ?>
+                                        <?php } ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- Información de películas -->
+                            <div class="mt-3 d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle"></i>
+                                    Total de películas: <strong><?php echo count($peliculas); ?></strong>
+                                </small>
+                                <small class="text-muted">
+                                    <i class="fas fa-scroll"></i>
+                                    Desplázate para ver más películas
+                                </small>
+                            </div>
                         </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sección de Noticias -->
+        <div class="row mt-5">
+            <!-- Formulario para agregar noticias -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="fas fa-newspaper me-2"></i>Agregar Nueva Noticia</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="" method="post">
+                            <div class="mb-3">
+                                <label for="titulo_noticia" class="form-label">Título de la Noticia</label>
+                                <input type="text" class="form-control" name="titulo_noticia" id="titulo_noticia" placeholder="Titulo de la noticia" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="descripcion_noticia" class="form-label">Descripción</label>
+                                <textarea class="form-control" name="descripcion_noticia" id="descripcion_noticia" rows="4" placeholder="Escribe aquí la descripción de la noticia..." required></textarea>
+                            </div>
+                            <button type="submit" name="agregar_noticia" class="btn btn-primary w-100">
+                                <i class="fas fa-plus me-2"></i>Agregar Noticia
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Lista de noticias -->
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="fas fa-list me-2"></i>Noticias Publicadas</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <?php if(count($noticias) > 0){ ?>
+                                <?php foreach($noticias as $noticia): ?>
+                                <thead class="table-light">
+                                    
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Título</th>
+                                        <th>Descripción</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Ejemplo de noticias (aquí conectarás con tu base de datos) -->
+                                    <tr>
+                                        <td><?php echo $noticia['id'] ?></td>
+                                        <td><?php echo $noticia['titulo'] ?></td>
+                                        <td><?php echo $noticia['descripcion'] ?></td>
+                                        <td>
+                                            <a href="?borrar_noticia=<?php echo $noticia['id'] ?>" class="btn btn-danger btn-sm">
+                                                <i class="fas fa-trash" data-id="<?php echo $noticia['id'] ?>"></i> Eliminar
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <?php endforeach; ?>
+                                <?php } ?>
+                            </table>
+                        </div>
+                        
+                        <!-- Mensaje cuando no hay noticias -->
+                        <div class="text-center text-muted py-4" style="display: none;" id="no-noticias">
+                            <i class="fas fa-newspaper fa-3x mb-3"></i>
+                            <p>No hay noticias publicadas aún.</p>
+                            <p class="small">Agrega tu primera noticia usando el formulario de la izquierda.</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

@@ -4,6 +4,7 @@
 $objconexion = new Connect();
 $mostrar = $objconexion->consultar("SELECT * FROM `pelicula`");
 $destacadas = $objconexion->consultar("SELECT * FROM `pelicula` WHERE destacado = 1");
+$noticias = $objconexion->consultar("SELECT * FROM `news` ORDER BY id DESC");
 
     $objconexion = new Connect();
     $mostrar = $objconexion->consultar("SELECT p.*, 
@@ -20,10 +21,136 @@ $destacadas = $objconexion->consultar("SELECT * FROM `pelicula` WHERE destacado 
     WHERE p.destacado = 1 
     GROUP BY p.id");
 ?>
-<?php if(count($destacadas) > 0) { ?>
-    <div class="container">
-        <h2>Películas destacadas</h2>
-        <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+<!-- Barra lateral de filtros fija -->
+<div class="sidebar-fixed d-none d-md-block">
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-filter"></i> Filtros</h5>
+        </div>
+        <div class="card-body">
+                        <!-- Filtro por género -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Género</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="accion" value="Acción">
+                                <label class="form-check-label" for="accion">Acción</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="drama" value="Drama">
+                                <label class="form-check-label" for="drama">Drama</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="comedia" value="Comedia">
+                                <label class="form-check-label" for="comedia">Comedia</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="terror" value="Terror">
+                                <label class="form-check-label" for="terror">Terror</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="ciencia-ficcion" value="Ciencia Ficción">
+                                <label class="form-check-label" for="ciencia-ficcion">Ciencia Ficción</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="romance" value="Romance">
+                                <label class="form-check-label" for="romance">Romance</label>
+                            </div>
+                        </div>
+
+                        <!-- Filtro por puntuación -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Puntuación mínima</label>
+                            <select class="form-select" id="puntuacion-minima">
+                                <option value="">Todas las puntuaciones</option>
+                                <option value="1">1 estrella o más</option>
+                                <option value="2">2 estrellas o más</option>
+                                <option value="3">3 estrellas o más</option>
+                                <option value="4">4 estrellas o más</option>
+                                <option value="5">5 estrellas</option>
+                            </select>
+                        </div>
+
+                        <!-- Filtro por año -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Año de estreno</label>
+                            <div class="row">
+                                <div class="col-6">
+                                    <input type="number" class="form-control" id="año-desde" placeholder="Desde" min="1900" max="2024">
+                                </div>
+                                <div class="col-6">
+                                    <input type="number" class="form-control" id="año-hasta" placeholder="Hasta" min="1900" max="2024">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ordenar por -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Ordenar por</label>
+                            <select class="form-select" id="ordenar-por">
+                                <option value="nombre">Nombre (A-Z)</option>
+                                <option value="nombre-desc">Nombre (Z-A)</option>
+                                <option value="puntuacion">Mejor puntuación</option>
+                                <option value="fecha">Más recientes</option>
+                                <option value="fecha-desc">Más antiguas</option>
+                            </select>
+                        </div>
+
+                        <!-- Solo destacadas -->
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="solo-destacadas">
+                                <label class="form-check-label" for="solo-destacadas">
+                                    Solo películas destacadas
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Botones de acción -->
+                        <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-primary" id="aplicar-filtros">
+                                <i class="fas fa-search"></i> Aplicar filtros
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" id="limpiar-filtros">
+                                <i class="fas fa-times"></i> Limpiar filtros
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sistema de Noticias -->
+                <div class="card mt-4">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="fas fa-newspaper me-2"></i>Noticias</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="news-container" style="max-height: 400px; overflow-y: auto;">
+                            <!-- Noticia 1 -->
+                            <?php if(count($noticias) > 0){ ?>
+                            <?php foreach($noticias as $noticia): ?>
+                            <div class="news-item border-bottom p-3">
+                                <div class="d-flex">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1 text-dark"><?php echo $noticia['titulo'] ?></h6>
+                                        <p class="mb-1 text-muted small"><?php echo $noticia['descripcion'] ?></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                        <?php } ?>
+                        </div>
+                    </div>
+                    <div class="card-footer text-center">
+                        <a href="#" class="btn btn-outline-primary btn-sm">Ver todas las noticias</a>
+                    </div>
+                </div>
+            </div>
+
+<!-- Contenido principal -->
+<div class="container-fluid">
+    <div class="content-with-sidebar">
+        <?php if(count($destacadas) > 0) { ?>
+            <h2>Películas destacadas</h2>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
            <?php foreach($destacadas as $destacada) { ?>
             <div class="col">
                 <div class="card">
@@ -106,16 +233,14 @@ $destacadas = $objconexion->consultar("SELECT * FROM `pelicula` WHERE destacado 
                 </div>
             </div>
             <?php } ?>
-        </div>
-    </div>
-    <br>
-<?php } ?>
+            </div>
+            <br>
+        <?php } ?>
     
-    <!-- Contenido Principal -->
-    <div class="container">
+        <!-- Todas las películas -->
         <h2 class="mb-4">Todas las películas</h2>
         <!-- Grid de películas -->
-        <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             <?php foreach($mostrar as $mostrado) {?>
             <div class="col">
                 <div class="card">
@@ -196,10 +321,13 @@ $destacadas = $objconexion->consultar("SELECT * FROM `pelicula` WHERE destacado 
                 </div>
             </div>
         </div>
-        <?php } ?>
+                <?php } ?>
+            </div>
         </div>
     </div>
-    <!-- Bootstrap JS -->
+</div>
+
+<!-- Bootstrap JS -->
      <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Manejar clics en estrellas interactivas
